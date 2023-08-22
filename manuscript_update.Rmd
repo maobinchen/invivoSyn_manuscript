@@ -1,0 +1,647 @@
+---
+title: "manuscript_update"
+author: "Binchen Mao"
+date: "2023-08-18"
+output:
+    html_document:
+        code_folding: hide
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = F,
+  warning = F,
+  fig.height = 8,
+  fig.width = 16,
+  dpi = 72,
+  cache = FALSE
+)
+```
+
+```{r setup}
+library(invivoSyn)
+library(ggplot2)
+library(ggpubr)
+library(pracma)
+library(magrittr)
+library(kableExtra)
+library(dplyr)
+
+simu_TV2=function(n=5,tv0_min=100,tv0_max=300,vehicle_double_time=3,t=21,cv_r=0.1,eu_tv=3000,tgi_a=0.5,tgi_b=0.4,tgi_c=0.8,kit_a=0,kit_b=0,kit_c=0,rp_a=0,rp_b=0,rp_c=0,irt_a=0,irt_b=0,irt_c=0,sigma=1,...){
+  trs=c('Vehicle control (C)','Drug A (A)','Drug B (B)','Drug A+B (A+B)')
+  treatments=factor(trs,levels=trs)
+  tv0s=as.vector((sapply(1:4,function(i) runif(n,min=tv0_min,max=tv0_max))))
+  k_v=log(2)/vehicle_double_time #calcul-1ate growth rate for vehicle group
+  sd_k=cv_r*k_v #standard deviation of tumor growth rate
+  drug_eff_vec=rep(c(0,log(1-tgi_a)/14,log(1-tgi_b)/14,log(1-tgi_c)/14),each=n)#drug effect
+  kit_vec=rep(c(0,kit_a,kit_b,kit_c),each=n) #kickin time vector
+  rp_vec=rep(c(0,rp_a,rp_b,rp_c),each=n)
+  irt_vec=rep(c(0,irt_a,irt_b,irt_c),each=n) #induced resistance time vector
+  k_vec=as.vector(sapply(1:4,function(i) rnorm(n,mean=k_v,sd=sd_k)))#vector of initial tumor growth rate
+  #k_vec=as.vector(sapply(c(k_v,k_a,k_b,k_c),function(k) rnorm(n,mean=k,sd=sigma_k)))
+  tv=data.frame(Treatment=rep(treatments,each=n),Mouse=1:(4*n),Day=0,TV=tv0s,kit=kit_vec,rp=rp_vec,irt=irt_vec,k_c=k_vec,drug_eff=drug_eff_vec) %>%
+    mutate(k=ifelse(kit==0,k_c+drug_eff,k_c),rpv=ifelse(irt==0,rp_vec*TV,0))
+  tvs=list()
+  tvs[[1]]=tv
+  for(i in 1:t){
+    tvs[[i+1]]=tvs[[i]] %>% mutate(Day=i) %>% mutate(k=ifelse(Day>=kit,k_c+drug_eff,k_c),rpv=ifelse(Day>=irt & rpv==0,rp*TV,rpv)) %>% mutate(TV=(TV-rpv)*exp(k)+rpv*exp(k_c),rpv=rpv*exp(k_c)) %>%
+      mutate(TV=TV+rnorm(n*4,sd=sigma)) %>% mutate(TV=ifelse(TV>=eu_tv,NA,TV))
+  }
+  tv_long=do.call(rbind,tvs) %>% as.data.frame()
+  tv_long=tv_long %>% mutate(Group=factor(paste0("Group ",as.numeric(Treatment)))) %>% select(Group,Treatment,Mouse,Day,TV)
+  tv_long=expand_tv(tv_long)
+  tv_long
+}
+```
+
+# Introduction
+
+This rmarkdown file includes the code to generate the figures used in manuscript **Statistical Assessment of Drug Synergy from In Vivo Combination Studies using Mouse Tumor Models**.
+
+simulate tumor growth date to generate Figure 1B, then calculate average eGR of each group to estimate tumor growth rate under exponential tumor growth model, and plot tumor growth curve as Figure 1C. Finally, use invivoSyn's method to evaluate Bliss synergy (Figure 1D) 
+
+# Figure 1
+
+```{r Figure1}
+#--draw Figure 1A
+#--sample from exponential growth--#
+#set.seed(12345)
+set.seed(123451)
+day = c(0, 3, 7, 10, 14, 17, 21, 24,27,30)
+V0 = 50
+k = 0.11
+Vt = V0 * exp(k*day)
+n = length(Vt)
+Vtt = Vt + rnorm(n, Vt, 5*day)
+TVday = data.frame(day,log(Vtt), log(Vtt[1]))
+names(TVday) = c('day','logTV','logTV0')
+TVday.AUC = pracma::trapz(x=TVday$day,y=TVday$logTV) - pracma::trapz(x=TVday$day,y=TVday$logTV0)
+TVday.eg = function(x) log(100) + 0.1077018 * x #2*TVday.AUC/30/30 = 0.1077018
+
+#set.seed(143531)
+set.seed(1432)
+k = -0.07
+Vt = V0 * exp(k*day)
+n = length(Vt)
+Vtt = Vt + rnorm(n, Vt, 0.5*day)
+Vtt[Vtt<0] = 0
+Vtt[9]=1
+Vtt[10]=1
+plot(Vtt~day)
+TVday2 = data.frame(day,log(Vtt), log(Vtt[1]))
+TVday2 = head(TVday2,-1)
+names(TVday2) = c('day','logTV','logTV0')
+TVday2.AUC = pracma::trapz(x=TVday2$day,y=TVday2$logTV) - pracma::trapz(x=TVday2$day,y=TVday2$logTV0)
+TVday2.eg = function(x) log(100)  -0.08622278 * x #2*TVday.AUC/30/30 =  -0.08622278
+
+
+pdf(file='Figure1a.pdf')
+ggplot(TVday, aes(x=day, y=logTV)) +
+  geom_point(color='steelblue3', size=5)+
+  geom_line(aes(y = logTV), size=1.5, color='steelblue3') +
+  geom_line(aes(y = logTV0), size=1.5) +
+  geom_function(fun=TVday.eg, color='red', size=2) +
+  geom_ribbon(data=TVday,
+              aes(ymin=logTV0,ymax=logTV), fill="coral", alpha=0.3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,30)) +
+  #scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
+  geom_text(x=20, y=5.5, label="AUC=48.47", size=7,  color='black')+
+  #geom_text(x=15, y=2, label=expression(nAUC == frac(AUC, 30^2)), size=9,  color='black')+
+  geom_text(x=15, y=2, label=expression(nAUC == frac(2*AUC, 30^2)), size=9,  color='black')+
+  geom_text(x=25, y=2, label="= 0.108", size=9,  color='black')+
+  theme_pubr(base_size = 20)
+
+ggplot(TVday2, aes(x=day, y=logTV)) +
+  geom_point(color='steelblue3', size=5)+
+  geom_line(aes(y = logTV), size=1.5, color='steelblue3') +
+  geom_line(aes(y = logTV0), size=1.5) +
+  geom_function(fun=TVday2.eg, color='red', size=2, xlim=c(0,27)) +
+  geom_ribbon(data=TVday2,
+              aes(ymin=logTV0,ymax=logTV), fill="lightgreen", alpha=0.3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10), limits=c(0,30)) +
+  #scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
+  geom_text(x=20, y=4, label="AUC=-31.43", size=7, color='black')+
+  geom_text(x=15, y=6, label=expression(nAUC == frac(2*AUC, 27^2)), size=9,  color='black')+
+  geom_text(x=26, y=6, label="= -0.086", size=9,  color='black')+
+  theme_pubr(base_size = 20)
+dev.off()
+
+t=35
+tv=simu_TV2(cv_r=0.1,t=t,tgi_c=0.8,n = 10,vehicle_double_time = 6)
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv=tv %>% filter(Day %in% t_vec)
+tv %>% ggplot() + aes(Day, TV, group = Mouse, color = Group) +
+  geom_point() + geom_line() + theme_Publication() + facet_wrap(~Treatment) +
+  ggsci::scale_color_jco() + theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = 'none')
+ggsave("Fig1B_tumor_growth_curve_individual.png", width = 10,height = 8, dpi = 300)
+auc_lst=get_mAUCr(tv)
+auc_df=auc_lst$auc_mouse %>% group_by(Group) %>% summarise(nAUC=mean(AUC)) %>% left_join(tv %>% select(Group,Treatment) %>% unique())
+tv_m=expand.grid(Day=seq(0,35,0.01),TV0=150,Treatment=levels(tv$Treatment)) %>% left_join(auc_df)
+tv_m=tv_m %>% mutate(TV=TV0*exp(nAUC*Day))
+tv_m %>% filter(TV<3000) %>% ggplot() + aes(Day, TV, color = Treatment)  + geom_line(size=1.2) +theme_Publication() +
+  ggsci::scale_color_jco() +geom_vline(xintercept = 21,linetype=2,size=1.2)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.2,0.85),legend.title = element_blank(),legend.spacing.y = unit(0.1,'cm'),legend.key.size = unit(3,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))
+ggsave("Fig1C_tumor_growth_curve_nAUC.png", width = 10,height = 8, dpi = 300)
+AUC_synergy(auc_lst,ci_type = 'bca',kw='Fig1D')
+```
+
+Data were downloaded from the link: https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-022-04437-2/MediaObjects/41586_2022_4437_MOESM11_ESM.xlsx, which was related to Figure 8a of publication **Jaaks P, Coker E A, Vis D J, et al. Effective drug combinations in breast, colon and pancreatic cancer cells[J]. Nature, 2022, 603(7899): 166-173.**. CombPDX calculations were done from the webserver: https://licaih.shinyapps.io/CombPDX/, and the results were downloaded in Rdata format.
+
+# Figure 2
+```{r Figure2}
+SW837 <- read_tv(system.file("extdata", "SW837.csv", package = "invivoSyn"))
+plot_tumor_growth_curve(SW837,kw='Fig2A_SW837')
+#load SW837 combPDX results
+load('CombPDX results/SW837.Rdata')
+bi_effect[2,4:5]=bi_effect[2,4:5]*10^15
+level_order <- c("D7","D14","D21","D25","Global")
+pval=bi_effect['Global','p.value']
+bi_effect %>% filter(Days != 'D0') %>% mutate(Day=factor(Days,level=level_order)) %>% ggplot()+aes(Day,CI)+geom_point(color='blue',size=5)+
+  geom_segment(aes(xend=Day,y=L95,yend=U95),size=1.5,color='black')+geom_line(size=1.3,color='gray',linetype=2)+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=L95,yend=L95),size=1.5,color='black')+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=U95,yend=U95),size=1.5,color='black')+xlab("Day")+ylab("Bliss CI(CombPDX)")+theme_Publication()+scale_x_discrete(limits=level_order)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.6)),axis.text=element_text(size=rel(1.5)),axis.ticks=element_line(size=rel(2.5)))+
+  annotation_custom(grid::textGrob(label = paste0("gCI(CombPDX) pval=",pval),
+                                    x = unit(0.7, "npc"), y = unit(0.95, "npc"),
+                                    gp = grid::gpar(cex = 2)))
+ggsave('Fig2B_SW837_CombPDX_CI.png',width=8,height=8,dpi=300)
+
+
+AUC_lst <- get_mAUCr(SW837, ci = 0.95, ci_type = "bca")
+bliss_synergy_AUC <- AUC_synergy(AUC_lst,ci_type = "bca",kw='Figure2C-2D_SW837_R')
+
+SNU81 <- read_tv(system.file("extdata", "SNU-81.csv", package = "invivoSyn"))
+plot_tumor_growth_curve(SNU81,kw='Fig2E_SNU81')
+#load SNU-81 combPDX results
+load('CombPDX results/SNU-81.Rdata')
+bi_effect[2,4:5]=bi_effect[2,4:5]*10^15
+level_order <- c("D8","D15","Global")
+pval=bi_effect['Global','p.value']
+bi_effect %>% filter(Days != 'D0') %>% mutate(Day=factor(Days,level=level_order)) %>% ggplot()+aes(Day,CI)+geom_point(color='blue',size=5)+
+  geom_segment(aes(xend=Day,y=L95,yend=U95),size=1.5,color='black')+geom_line(size=1.3,color='gray',linetype=2)+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=L95,yend=L95),size=1.5,color='black')+ylim(c(-0.7,1.1))+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=U95,yend=U95),size=1.5,color='black')+xlab("Day")+ylab("Bliss CI(CombPDX)")+theme_Publication()+scale_x_discrete(limits=level_order)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.6)),axis.text=element_text(size=rel(1.5)),axis.ticks=element_line(size=rel(2.5)))+
+  annotation_custom(grid::textGrob(label = paste0("gCI(CombPDX) pval=",pval),
+                                   x = unit(0.7, "npc"), y = unit(0.95, "npc"),
+                                   gp = grid::gpar(cex = 2)))
+ggsave('Fig2F_SNU81_CombPDX_CI.png',width=8,height=8,dpi=300)
+AUC_lst <- get_mAUCr(SNU81, ci = 0.95, ci_type = "bca")
+bliss_synergy_AUC <- AUC_synergy(AUC_lst,ci_type = "bca",kw='Figure2G-2H_SNU-81')
+
+LS1034 <- read_tv(system.file("extdata", "LS_1034.csv", package = "invivoSyn"))
+plot_tumor_growth_curve(LS1034,kw='Fig2I_LS1034')
+#load LS1034 combPDX results
+load('CombPDX results/LS1034.Rdata')
+bi_effect[2,4:5]=bi_effect[2,4:5]*10^15
+bi_effect[2,4]=bi_effect[2,4]*10
+level_order <- c("D3","D10","D17","Global")
+pval=bi_effect['Global','p.value']
+bi_effect %>% filter(Days != 'D0') %>% mutate(Day=factor(Days,level=level_order)) %>% ggplot()+aes(Day,CI)+geom_point(color='blue',size=5)+
+  geom_segment(aes(xend=Day,y=L95,yend=U95),size=1.5,color='black')+geom_line(size=1.3,color='gray',linetype=2)+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=L95,yend=L95),size=1.5,color='black')+ylim(c(-0.7,2.0))+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=U95,yend=U95),size=1.5,color='black')+xlab("Day")+ylab("Bliss CI(CombPDX)")+theme_Publication()+scale_x_discrete(limits=level_order)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.6)),axis.text=element_text(size=rel(1.5)),axis.ticks=element_line(size=rel(2.5)))+
+  annotation_custom(grid::textGrob(label = paste0("gCI(CombPDX) pval=",pval),
+                                   x = unit(0.7, "npc"), y = unit(0.95, "npc"),
+                                   gp = grid::gpar(cex = 2)))
+ggsave('Fig2J_LS1034_CombPDX_CI.png',width=8,height=8,dpi=300)
+
+AUC_lst <- get_mAUCr(LS1034, ci = 0.95, ci_type = "bca")
+bliss_synergy_AUC <- AUC_synergy(AUC_lst,ci_type = 'bca',kw='Figure2L-2M_R_LS1034')
+```
+
+Depletion data is extracted from publication **Jin Y, An X, Mao B, et al. Different syngeneic tumors show distinctive intrinsic tumor-immunity and mechanisms of actions (MOA) of anti-PD-1 treatment[J]. Scientific Reports, 2022, 12(1): 3278.**, 
+
+# Figure 3
+```{r Figure3}
+path='depletion_study/'
+single_trt_info=read.csv(paste0(path,'single_trt.csv'),h=F)
+colnames(single_trt_info)=c('Group','Treatment')
+single_trt_info=single_trt_info %>% mutate(Treatment = gsub("\t","",Treatment),Group = gsub("0","",Group)) 
+combo_trt_info=read.csv(paste0(path,'combo_trt.csv'),h=F)
+colnames(combo_trt_info)=c('Group','Treatment')
+trts=c('CD8','CD4','GM1','Liposomes','CD25')
+grp_sels_comb=sapply(trts,function(tr) combo_trt_info %>% filter(grepl(tr,Treatment)) %>% pull(Group))
+grp_sels_single=sapply(trts,function(tr) single_trt_info %>% filter(grepl(tr,Treatment) & !grepl('\\+',Treatment)) %>% pull(Group)) 
+#combine auc for groups in two AUC list, vehicle group and aPD1 grows faster in single treatment experiment, while heterogeneity in higher in combo treatment experiment
+combine_auc_lst=function(AUC_lst_c,AUC_lst_s,tr){
+  auc_mouse_c=AUC_lst_c$auc_mouse
+  auc_mouse_s=AUC_lst_s$auc_mouse
+  auc_group_mean_s=AUC_lst_s$auc_mouse %>% group_by(Group) %>% summarise(m=mean(AUC)) %>% pull(m)
+  auc_group_mean_c=AUC_lst_c$auc_mouse %>% group_by(Group) %>% summarise(m=mean(AUC)) %>% pull(m)
+  cs_auc_ratio=auc_group_mean_c[1]/auc_group_mean_s[1]  #ratio of average nAUC between combo and single
+  auc_mouse_c=AUC_lst_c$auc_mouse %>% filter(Group %in% c("Group 1","Group 2",grp_sels_comb[tr])) #%in% c("Group 1","Group 2",
+  auc_mouse_c[auc_mouse_c$Group == grp_sels_comb[tr],'Group']="Group 4"
+  max_mouse=max(auc_mouse_c$Mouse)
+  #ajdust nAUC based on AUC ratio between vehicle
+  auc_mouse_s=AUC_lst_s$auc_mouse %>% filter(Group %in%  c(grp_sels_single[tr])) %>% mutate(Mouse=Mouse+max_mouse,AUC=AUC*cs_auc_ratio)
+  auc_mouse_s[auc_mouse_s$Group == grp_sels_single[tr],'Group']="Group 3"
+  list(auc_mouse=rbind(auc_mouse_s,auc_mouse_c))
+}
+combine_auc_lst_special=function(AUC_lst_s){
+  auc_mouse_s=AUC_lst_s$auc_mouse
+  auc_mouse_s=auc_mouse_s %>% filter(Group %in% c("Group 1","Group 2","Group 7","Group 8"))
+  auc_mouse_s[auc_mouse_s$Group == "Group 7",'Group']="Group 3"
+  auc_mouse_s[auc_mouse_s$Group == "Group 8",'Group']="Group 4"
+  list(auc_mouse=auc_mouse_s)
+}
+getSynergy=function(model,nboot=1000,trts=trts){
+  dat1=read_tv(paste0(path,model,'_single.csv'))
+  dat2=read_tv(paste0(path,model,'_combo.csv'))
+  AUC_lst_s=get_mAUCr(dat1)
+  AUC_lst_c=get_mAUCr(dat2)
+  synergy_df=do.call(rbind,lapply(trts,function(trt)
+  { 
+      AUC_lst_cb=NULL
+      if(model %in% c('MC38','Hepa16') & trt=='CD25')
+        AUC_lst_cb=combine_auc_lst_special(AUC_lst_s)
+      else
+        AUC_lst_cb=combine_auc_lst(AUC_lst_c,AUC_lst_s,trt)
+      AUC_synergy_cb=AUC_synergy(AUC_lst_cb,ci_type = "bca",boot_n = nboot,save=F,display = F)
+      AUC_synergy_cb = AUC_synergy_cb %>% mutate(Treatment=trt)
+      AUC_synergy_cb
+    }))
+  synergy_df=synergy_df %>% mutate(Model=model)
+  list(Synergy_df=synergy_df,tv=list(single=dat1,combo=dat2),nAUC=list(single=AUC_lst_s,combo=AUC_lst_c))
+}
+#change GM1 to aNK, CD.. to aCD..
+CT26_synergy=getSynergy('CT26',nboot=1000,trts=trts)
+###EMT6, same experiment design; Hepa16, single treatment only have 6 groups;Hepa16 & MC38, anti-gr1(MDSC) instead of anti-CD25 (Treg)
+EMT6_synergy=getSynergy('EMT6',nboot=1000,trts=trts)
+#For MC38
+single_trt_info=read.csv(paste0(path,'single_trt_MC38.csv'),h=F)
+colnames(single_trt_info)=c('Group','Treatment')
+single_trt_info=single_trt_info %>% mutate(Treatment = gsub("\t","",Treatment),Group = gsub("0","",Group)) 
+
+
+combo_trt_info=read.csv(paste0(path,'combo_trt_MC38.csv'),h=F)
+colnames(combo_trt_info)=c('Group','Treatment')
+combo_trt_info=combo_trt_info %>% mutate(Treatment = gsub("\t","",Treatment),Group = gsub("0","",Group)) 
+
+
+trts=c('CD8','CD4','NK','Liposomes','CD25')
+grp_sels_comb=sapply(trts,function(tr) combo_trt_info %>% filter(grepl(tr,Treatment)) %>% pull(Group))
+grp_sels_single=sapply(trts,function(tr) single_trt_info %>% filter(grepl(tr,Treatment) & !grepl('\\+',Treatment)) %>% pull(Group)) 
+MC38_synergy=getSynergy('MC38',nboot=1000,trts=trts)
+
+#For Hepa16
+single_trt_info=read.csv(paste0(path,'single_trt_Hepa16.csv'),h=F)
+colnames(single_trt_info)=c('Group','Treatment')
+single_trt_info=single_trt_info %>% mutate(Treatment = gsub("\t","",Treatment),Group = gsub("0","",Group)) 
+
+
+combo_trt_info=read.csv(paste0(path,'combo_trt_Hepa16.csv'),h=F)
+colnames(combo_trt_info)=c('Group','Treatment')
+combo_trt_info=combo_trt_info %>% mutate(Treatment = gsub("\t","",Treatment),Group = gsub("0","",Group)) 
+
+
+trts=c('CD8','CD4','NK','Liposomes','CD25')
+grp_sels_comb=sapply(trts,function(tr) combo_trt_info %>% filter(grepl(tr,Treatment)) %>% pull(Group))
+grp_sels_single=sapply(trts,function(tr) single_trt_info %>% filter(grepl(tr,Treatment) & !grepl('\\+',Treatment)) %>% pull(Group)) 
+Hepa16_synergy=getSynergy('Hepa16',nboot=1000,trts=trts)
+
+all_synergy=rbind(CT26_synergy$Synergy_df,EMT6_synergy$Synergy_df,MC38_synergy$Synergy_df,Hepa16_synergy$Synergy_df)
+all_synergy %>% count(Treatment)
+all_synergy[all_synergy$Treatment %in% c('GM1','NK'),'Treatment']='aNK'
+all_synergy=all_synergy %>% mutate(Treatment=gsub('CD','aCD',Treatment))
+
+all_synergy %>% filter(Metric=='CI') %>% ggplot()+aes(Treatment,Value)+geom_point(color='blue',size=5)+geom_hline(yintercept = 1,lty=2,color='red')+
+  geom_segment(aes(xend=Treatment,y=lb,yend=ub),size=1.5,color='black')+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.8)),axis.ticks=element_line(size=rel(8)))+
+  facet_wrap(~Model,ncol=1,scales = 'free_y')+theme_Publication()+scale_y_log10()+ylab("Bliss CI(invivoSyn)")
+ggsave("Fig3-CI_depletion.png",width=8,height=10,dpi=300)
+```
+
+We run the simulation regular tumor growth. Because it takes many hours to run simulation using a multi-core laptop, we saved the results of power calculation in a csv file.
+
+# Figure 4
+```{r}
+#### Scenario A
+kw='regular'
+t=21
+tv1=simu_TV(cv_r=0.1,vehicle_double_time = 7,tv0 = 100,n = 10,t=t)
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv1=tv1 %>% filter(Day %in% t_vec)
+plot_tumor_growth_curve(tv1,kw='Fig4A')
+
+#it will take many hours to run the simulations, therefore I saved the results in csv files
+system.time(power_stats1 <- sim_power(
+  type = c("CombPDX_CI", "AUC"),
+  vehicle_double_time = 7,
+  tv0=100,
+  method = c("Bliss"),
+  n_sim=100,
+  n = 2:10,
+  tgi_c = c(0.7,0.75,0.8)
+))
+write.csv(power_stats1,"power_stats_regular.csv",row.names = F)
+power_stats1=read.csv('power_stats_regular_variable_tgr.csv')
+power_stats1=power_stats1 %>% filter(vehicle_double_time==7) %>% mutate(level=case_when(tgi_c==0.70 ~ 'Nil',tgi_c==0.75 ~ 'Weak',tgi_c==0.8 ~ 'Strong')) %>%
+  mutate(level=factor(level,levels=c("Nil","Weak","Strong")))
+ggplot(power_stats1 %>% filter(type=='AUC')) +
+  aes(n, Power) +
+  #geom_point() +
+  geom_smooth(n=3) +
+  facet_wrap( ~ level) +
+  theme_Publication() +
+  scale_colour_Publication()+ylab('Empirical power')+
+  theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig4B_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+ggsave(paste0('Fig4B_',kw,"_power_curve_bliss.pdf"), device = 'pdf',width = 8,height = 6, dpi = 300)
+
+
+#vary tumor growth rate (Doubling time)
+kw='regular_variable_tgr'
+system.time(power_stats_r1 <- sim_power(
+    type = c("CombPDX_CI", "AUC"),
+    vehicle_double_time = c(3,5,7,10),
+    tv0=100,
+    method = c("Bliss"),
+    n_sim=100,
+    n = 2:10,
+    tgi_c = c(0.7,0.75,0.8)
+))
+write.csv(power_stats_r1,"power_stats_regular_variable_tgr.csv",row.names = F)
+power_stats_r1=read.csv('power_stats_regular_variable_tgr.csv')
+
+power_stats_r1=power_stats_r1 %>% mutate(level=case_when(tgi_c==0.70 ~ 'Nil',tgi_c==0.75 ~ 'Weak',tgi_c==0.8 ~ 'Strong')) %>%
+  mutate(level=factor(level,levels=c("Nil","Weak","Strong"))) %>% mutate(vehicle_double_time=factor(paste0("DT=",vehicle_double_time),
+                                                                    levels=paste0("DT=",sort(unique(vehicle_double_time)))))
+#the higher the tumor growth rate, the smaller the power (higher tumor growth rate -> higher variability of tumor volume)
+ggplot(power_stats_r1 %>% dplyr::filter(type=='AUC')) +
+    aes(n, Power, color = type, group = type) +
+    geom_smooth(n=3) +
+    #geom_line() +
+    facet_grid(level~vehicle_double_time) +
+    theme_Publication()+ylab('Empirical power')+
+    scale_colour_Publication()+theme(legend.position = 'none')+
+    theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig4C_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+ggsave(paste0('Fig4C_',kw,"_power_curve_bliss.pdf"), device = 'pdf',width = 10,height = 8, dpi = 300)
+
+
+kw='regular_variable_euTV'
+system.time(power_stats_r2 <- sim_power(
+    type = c("CombPDX_CI", "AUC"),
+    vehicle_double_time = 5,
+    tv0=150,
+    method = c("Bliss"),
+    eu_tv=c(500,1000,1500,2000,2500),
+    n_sim=100,
+    n = 2:10,
+    tgi_c = c(0.7,0.75,0.8)
+))
+power_stats_r2=read.csv('power_stats_regular_variable_euTV.csv')
+
+#note: parse function can not parse character string starts with a number, and the parse function is not able to parse such character strings without further specifications. To solve that, we must explicitly surround the character string with quote
+power_stats_r2=power_stats_r2 %>% mutate(level=case_when(tgi_c==0.70 ~ 'Nil',tgi_c==0.75 ~ 'Weak',tgi_c==0.8 ~ 'Strong')) %>%
+  mutate(level=factor(level,levels=c("Nil","Weak","Strong"))) %>% mutate(eu_tv=factor(paste0("'",eu_tv," mm'^3"),
+                                                                    levels=paste0("'",sort(unique(eu_tv))," mm'^3")))
+ggplot(power_stats_r2 %>% dplyr::filter(type=='AUC')) +
+    aes(n, Power, color = type, group = type) +
+    geom_smooth(n=3) +
+    #geom_line() +
+    facet_grid(level~eu_tv,labeller =label_parsed)+ #use label_parsed here for superscript
+    theme_Publication() +ylab('Empirical power')+
+    scale_colour_Publication()+theme(legend.position = 'none')+
+    theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig4D_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+ggsave(paste0('Fig4D_',kw,"_power_curve_bliss.pdf"), device = 'pdf',width = 10,height = 8, dpi = 300)
+```
+
+CombPDX calculations were done from the webserver: https://licaih.shinyapps.io/CombPDX/, and the results were downloaded in Rdata format.
+
+# Figure 5
+```{r}
+CR1197 <- read_tv(system.file("extdata", "CR1197.csv", package = "invivoSyn"))
+plot_tumor_growth_curve(CR1197,kw='Fig5A_CR1197')
+load('CombPDX results/CR1197.Rdata')
+bi_effect[2,4:5]=bi_effect[2,4:5]*10^15
+level_order <- c("D3","D7","D10","D14","D17","Global")
+pval=bi_effect['Global','p.value']
+bi_effect %>% filter(Days != 'D0') %>% mutate(Day=factor(Days,level=level_order)) %>% ggplot()+aes(Day,CI)+geom_point(color='blue',size=5)+
+  geom_segment(aes(xend=Day,y=L95,yend=U95),size=1.5,color='black')+geom_line(size=1.3,color='gray',linetype=2)+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=L95,yend=L95),size=1.5,color='black')+
+  geom_segment(aes(x=Day-0.2,xend=Day+0.2,y=U95,yend=U95),size=1.5,color='black')+xlab("Day")+ylab("Bliss CI(CombPDX)")+theme_Publication()+scale_x_discrete(limits=level_order)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.6)),axis.text=element_text(size=rel(1.5)),axis.ticks=element_line(size=rel(2.5)))+
+  annotation_custom(grid::textGrob(label = paste0("gCI(CombPDX) pval=",pval),
+                                   x = unit(0.7, "npc"), y = unit(0.95, "npc"),
+                                   gp = grid::gpar(cex = 2)))
+ggsave('Fig5B_CR1197_CombPDX_CI.png',width=8,height=8,dpi=300)
+AUC_lst <- get_mAUCr(CR1197, ci = 0.95, ci_type = "bca")
+bliss_synergy_AUC <- AUC_synergy(AUC_lst,ci_type = 'bca',kw='Figure5C-5D_CR1197')
+
+####Scenario B
+t=50
+kw='Delayed_kickin'
+tv2=simu_TV(cv_r=0.05,vehicle_double_time = 5,tv0 = 100,tgi_c = 0.85,n = 10,t=t,kit_a = 10 ,kit_c = 10)
+plot_tumor_growth_curve(tv2,y='logTV')
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv2=tv2 %>% filter(Day %in% t_vec)
+plot_tumor_growth_curve(tv2,y='TV',kw='Fig5E')
+
+system.time(power_stats3 <- sim_power(
+  type = c("CombPDX_CI", "AUC"),
+  vehicle_double_time = 5,
+  tv0=100,
+  method = c("Bliss"),
+  n_sim=100,
+  n = 2:10,
+  tgi_c = c(0.85),
+  t=c(30,40,50),
+  kit_a=10,
+  kit_c=10
+))
+write.csv(power_stats3,"power_stats_delayed_kickin_Bliss.csv",row.names = F)
+power_stats3=read.csv('power_stats_delayed_kickin_Bliss.csv')
+power_stats3=power_stats3 %>% mutate(t=paste0('T(obs)=',t, ' days'))
+ggplot(power_stats3 %>% filter(type=='AUC')) +
+  aes(n, Power) +
+  #geom_point() +
+  geom_smooth(n=3) +
+  facet_wrap(~t) +
+  theme_Publication() +ylab('Empirical power')+
+  scale_colour_Publication()+scale_y_continuous(breaks = seq(0,1,0.2))+
+  theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig5F_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+
+```
+
+
+# Figure 6
+
+```{r}
+###Scenario C
+t=50
+kw='Intrinsic_resistance'
+tv3=simu_TV(cv_r=0.05,vehicle_double_time = 7,tv0 = 200,tgi_c = 0.8,n = 10,t=t,rp_a = 0.1,rp_b=0.1,rp_c=0.1)
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv3=tv3 %>% filter(Day %in% t_vec)
+plot_tumor_growth_curve(tv3,y='TV',kw='Fig6A')
+
+system.time(power_stats5 <- sim_power(
+  type = c("CombPDX_CI", "AUC"),
+  cv_r=c(0.1),
+  vehicle_double_time = 5,
+  tv0=100,
+  method = c("Bliss"),
+  n_sim=100,
+  n = 2:10,
+  tgi_c = c(0.75,0.8,0.9),
+  t=c(30,40,50),
+  rp_a=0.1,
+  rp_b=0.1,
+  rp_c=0.1
+))
+write.csv(power_stats5,"power_stats_intrinsic_resistance_Bliss.csv",row.names = F)
+power_stats5=read.csv('power_stats_intrinsic_resistance_Bliss.csv')
+power_stats5=power_stats5 %>% mutate(t=paste0('T(obs)=',t, ' days'))
+ggplot(power_stats5 %>% filter(type=='AUC')) +
+  aes(n, Power) +
+  #geom_point() +
+  geom_smooth(n=3) +
+  facet_wrap(~t) +
+  theme_Publication() +ylab('Empirical power')+
+  scale_colour_Publication()+scale_y_continuous(breaks = seq(0,1,0.2))+
+  theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig6B_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+
+###Scenario D
+t=50
+kw='Induced_resistance'
+tv4=simu_TV(cv_r=0.05,vehicle_double_time = 7,tv0 = 200,tgi_c = 0.8,n = 10,t=t,rp_a = 0.1,rp_c=0.1,irt_a = 10, irt_c = 10)
+
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv4=tv4 %>% filter(Day %in% t_vec)
+plot_tumor_growth_curve(tv4,y='TV',kw='Fig6C')
+
+system.time(power_stats6 <- sim_power(
+  type = c("CombPDX_CI", "AUC"),
+  cv_r=c(0.05),
+  vehicle_double_time = 7,
+  tv0=200,
+  method = c("Bliss"),
+  n_sim=100,
+  n = 2:10,
+  tgi_c = c(0.75,0.8),
+  t=c(30,40,50,60),
+  rp_a=0.1,
+  rp_c=0.1,
+  irt_a=10,
+  irt_c=10
+))
+write.csv(power_stats6,'power_stats_induced_resistance_Bliss.csv',row.names = F)
+power_stats6=read.csv('power_stats_induced_resistance_Bliss.csv')
+power_stats6=power_stats6 %>% filter(type=='AUC' & t != 50 & tgi_c==0.8)
+power_stats6=power_stats6 %>% mutate(t=paste0('T(obs)=',t, ' days'))
+ggplot(power_stats6 %>% filter(type=='AUC')) +
+  aes(n, Power) +
+  #geom_point() +
+  geom_smooth(n=3) +
+  facet_wrap(~t) +
+  theme_Publication() +ylab('Empirical power')+
+  scale_colour_Publication()+scale_y_continuous(breaks = seq(0,1,0.2))+
+  theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
+ggsave(paste0('Fig6D_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
+```
+
+# Figure 7
+```{r}
+###Ex vivo, survival (time vs survival, different dose level)
+dose_level=1/10^seq(0,6,1)
+pals=ggpubr::get_palette("jco",4)
+t_sel=c(24,48,72,96)
+t=0:96
+df=expand.grid(t=t,dose=dose_level)
+df=df %>% filter(dose!=1E-6) %>% mutate(k_t=(6+log10(dose))*0.01) %>% mutate(Survival=exp(-k_t*t)) %>% mutate(dose=factor(paste0(dose,' mg/L'),levels=paste0(dose_level,' mg/L')))
+df %>% ggplot()+aes(t,Survival,group=dose,color=dose)+geom_line(lwd=1.5)+geom_vline(xintercept = 72,lty=2,color=pals[4],lwd=2)+
+  theme_Publication()+ggsci::scale_color_jco()+theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.85,0.8),legend.title = element_blank(),legend.spacing.y = unit(0.2,'cm'),legend.key.size = unit(2,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+
+  scale_x_continuous(breaks=t_sel)+xlab('Time(hr)')+ylab("Relative Survival")
+ggsave("Fig7A_survival_vs_time_exvivo.png", width = 8,height = 8, dpi = 300)
+
+#dose_level <- seq(0, 8, 0.1)
+dose_level=1/10^seq(0,8,0.01)
+Treatment <- c("Drug A", "Drug B", "Drug A+B")
+drug_info <- expand.grid(Drug = Treatment, Dose = dose_level)
+drug_info <- drug_info %>%
+  mutate(m = ifelse(Drug == "Drug A", 1E-3,
+                    ifelse(Drug == "Drug B", 1E-2, 1E-4)))
+b=2
+drug_info=drug_info %>% mutate(Survival=1/(1+exp(b*(log(Dose)-log(m)))))
+drug_info=drug_info %>% mutate(Drug=factor(Drug,levels=c("Vehicle","Drug A","Drug B","Drug A+B")))
+
+drug_info %>% ggplot()+aes(Dose,Survival,group=Drug,color=Drug)+geom_line(lwd=1.5)+
+  theme_Publication()+scale_color_manual(values=pals[-1])+theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.85,0.85),legend.title = element_blank(),legend.spacing.y = unit(0.2,'cm'),legend.key.size = unit(2,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+
+  xlab('Dose(mg/L)')+ylab("Relative Survival")+ylim(c(0,1))+scale_x_log10(breaks = 1/10^seq(0,8,2))
+ggsave("Fig7B_curve_shift_exvivo.png", width = 8,height = 8, dpi = 300)
+
+ci_df=data.frame('FA'=1:100) %>% mutate(CI=0.9-FA/200+rnorm(100,0,0.15))
+ci_df %>% ggplot()+aes(FA,CI)+geom_smooth(lwd=1.5)+
+  theme_Publication()+theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  xlab('FA(%)')+ylab("CI")+ylim(c(0,1))+geom_hline(yintercept = 1,lty=2,lwd=2,color=pals[4])
+ggsave("Fig7C_FA_CI_exvivo.png", width = 8,height = 8, dpi = 300)
+
+dose_level=c(0,2,5,10,20,35,50)
+t_vec=0:30
+tgi_a=c(0,0.1,0.3,0.6,0.7,0.8,0.9)
+k_v=log(2)/7 #calcul-1ate growth rate for vehicle group
+tv=expand.grid(dose=dose_level,t=t_vec)
+tv=tv %>% mutate(TV0=100) %>% left_join(data.frame(dose=dose_level,tgi=tgi_a))
+tv=tv %>% mutate(k=k_v+log(1-tgi)/21) %>% mutate(TV=TV0*exp(k*t))
+tv=tv %>% mutate(dose=factor(paste0(dose,' mg/kg'),levels=paste0(dose_level,' mg/kg')))
+tv %>% filter(TV<3000) %>% ggplot() + aes(t, TV, color = dose)  + geom_line(size=1.2) +theme_Publication() +
+  ggsci::scale_color_jco() +
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.15,0.8),legend.title = element_blank(),legend.spacing.y = unit(0.1,'cm'),legend.key.size = unit(2,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+xlab('Time(Day)')
+ggsave("Fig7D_tumor_growth_curve_invivo.png", width = 8,height = 8, dpi = 300)
+
+t=30
+tv_combo=simu_TV2(cv_r=0.1,t=t,tgi_c=0.7,n = 10,vehicle_double_time = 6)
+t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
+if(t>max(t_vec)) t_vec=c(t_vec,t)
+tv_combo=tv_combo %>% filter(Day %in% t_vec)
+auc_lst=get_mAUCr(tv_combo)
+auc_df=auc_lst$auc_mouse %>% group_by(Group) %>% summarise(nAUC=mean(AUC)) %>% left_join(tv_combo %>% select(Group,Treatment) %>% unique())
+tv_m2=expand.grid(Day=seq(0,35,0.01),TV0=150,Treatment=levels(tv_combo$Treatment)) %>% left_join(auc_df)
+tv_m2=tv_m2 %>% mutate(TV=TV0*exp(nAUC*Day))
+tv_m2 %>% filter(TV<3000) %>% ggplot() + aes(Day, TV, color = Treatment)  + geom_line(size=1.2) +theme_Publication() +
+  ggsci::scale_color_jco() +geom_vline(xintercept = 21,linetype=2,size=1.2)+
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.3,0.85),legend.title = element_blank(),legend.spacing.y = unit(0.1,'cm'),legend.key.size = unit(2,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+xlab("Time(Day)")
+ggsave("Fig7E_tumor_growth_curve_nAUC.png", width = 8,height = 8, dpi = 300)
+
+
+t_vec=seq(0,30,0.1)
+ci_df=data.frame(t_vec) %>% mutate(CI=1-0.4*t_vec/30+rnorm(length(t_vec),0,0.15))
+ci_df %>% ggplot()+aes(t_vec,CI)+geom_smooth(lwd=1.5)+
+  theme_Publication()+theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  xlab('Time(Day)')+ylab("CI")+geom_hline(yintercept = 1,lty=2,lwd=2,color=pals[4])
+ggsave("Fig7F_Day_CI_invivo.png", width = 8,height = 8, dpi = 300)
+
+```
+
+
+# Reference
+
+1.  **Guo S, Jiang X, Mao B, et al.** The design, analysis and application of mouse clinical trials in oncology drug development[J]. *BMC cancer*, 2019, 19(1): 1-14.
+2.  **Demidenko E, Miller T W.** Statistical determination of synergy based on Bliss definition of drugs independence[J]. *PLoS One*, 2019, 14(11): e0224137.
+3.  **Huang L, Wang J, Fang B, et al.** CombPDX: a unified statistical framework for evaluating drug synergism in patient-derived xenografts[J]. *Scientific reports*, 2022, 12(1): 1-10.
