@@ -561,18 +561,26 @@ ggsave(paste0('Fig6D_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi =
 # Figure 7
 ```{r}
 ###Ex vivo, survival (time vs survival, different dose level)
-dose_level=1/10^seq(0,6,1)
-pals=ggpubr::get_palette("jco",4)
+dose_level=c(0, 0.137, 0.412, 1.23, 3.70, 11.1, 33.3)
 t_sel=c(24,48,72,96)
-t=0:96
-df=expand.grid(t=t,dose=dose_level)
-df=df %>% filter(dose!=1E-6) %>% mutate(k_t=(6+log10(dose))*0.01) %>% mutate(Survival=exp(-k_t*t)) %>% mutate(dose=factor(paste0(dose,' mg/L'),levels=paste0(dose_level,' mg/L')))
-df %>% ggplot()+aes(t,Survival,group=dose,color=dose)+geom_line(lwd=1.5)+geom_vline(xintercept = 72,lty=2,color=pals[4],lwd=2)+
-  theme_Publication()+ggsci::scale_color_jco()+theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
-  theme(legend.position = c(0.85,0.8),legend.title = element_blank(),legend.spacing.y = unit(0.2,'cm'),legend.key.size = unit(2,'line'),
-        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+
-  scale_x_continuous(breaks=t_sel)+xlab('Time(hr)')+ylab("Relative Survival")
+t_vec=0:96
+#tgi_a=c(0,0.1,0.3,0.6,0.7,0.8,0.9)
+tgi_a=c(0.4,0.45,0.5,0.55,0.6,0.65,0.7)
+k_v=log(2)/10 #calcul-1ate growth rate for vehicle group
+tv=expand.grid(dose=dose_level,t=t_vec)
+tv=tv %>% mutate(TV0=1) %>% left_join(data.frame(dose=dose_level,tgi=tgi_a))
+tv=tv %>% mutate(k=k_v+log(1-tgi)/21) %>% mutate(TV=TV0*exp(k*t))
+tv=tv %>% mutate(dose=factor(paste0(dose,' mmol'),levels=paste0(dose_level,' mmol')))
+tv %>% filter(TV<100) %>% ggplot() + aes(t, TV, color = dose)  + geom_line(size=1.2) +theme_Publication() +geom_vline(xintercept = 72,lty=2,color='red',lwd=2)+
+  ggsci::scale_color_jco() +
+  #scale_color_manual(values=c("#000000", rep("#9999CC",2),"#CC6666", rep("#9999CC",3))) +
+  #scale_color_manual(values=c("#0492C2", rep("#808080",2),"#808080", rep("#808080",3))) +
+  theme(axis.title.x=element_text(face = "bold",size = rel(1.4)),axis.text=element_text(size=rel(1.6)),axis.ticks=element_line(size=rel(3)))+
+  theme(legend.position = c(0.15,0.8),legend.title = element_blank(),legend.spacing.y = unit(0.1,'cm'),legend.key.size = unit(2,'line'),
+        legend.text = element_text(size=rel(1.4),face='bold'),legend.direction = 'vertical')+guides(color=guide_legend(byrow = TRUE))+xlab('Time(Day)')+
+  scale_x_continuous(breaks=t_sel)+xlab('Time(hr)')+ylab("Confluence percentage")
 ggsave("Fig7A_survival_vs_time_exvivo.png", width = 8,height = 8, dpi = 300)
+
 
 #dose_level <- seq(0, 8, 0.1)
 dose_level=1/10^seq(0,8,0.01)
