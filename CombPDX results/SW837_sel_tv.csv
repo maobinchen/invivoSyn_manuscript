@@ -1,0 +1,121 @@
+"Model","Mice.ID","Treatment","Tumor.Volume","Date"
+"SW837",1,"Vehicle",289.28,0
+"SW837",1,"Vehicle",514.685,7
+"SW837",1,"Vehicle",655.625,14
+"SW837",1,"Vehicle",1180.553,21
+"SW837",1,"Vehicle",909.891,25
+"SW837",2,"Vehicle",352.693,0
+"SW837",2,"Vehicle",699.045,7
+"SW837",2,"Vehicle",1048.601,14
+"SW837",2,"Vehicle",1270.78,21
+"SW837",2,"Vehicle",2202.683,25
+"SW837",3,"Vehicle",266.545,0
+"SW837",3,"Vehicle",506.787,7
+"SW837",3,"Vehicle",785.047,14
+"SW837",3,"Vehicle",1136.503,21
+"SW837",3,"Vehicle",1203.113,25
+"SW837",4,"Vehicle",230.181,0
+"SW837",4,"Vehicle",327.207,7
+"SW837",4,"Vehicle",585.484,14
+"SW837",4,"Vehicle",629.4,21
+"SW837",4,"Vehicle",718.948,25
+"SW837",5,"Vehicle",250.866,0
+"SW837",5,"Vehicle",535.903,7
+"SW837",5,"Vehicle",692.5,14
+"SW837",5,"Vehicle",1115.441,21
+"SW837",5,"Vehicle",1485.478,25
+"SW837",6,"Vehicle",429.178,0
+"SW837",6,"Vehicle",536.053,7
+"SW837",6,"Vehicle",858.822,14
+"SW837",6,"Vehicle",1011.743,21
+"SW837",6,"Vehicle",944.77,25
+"SW837",7,"Rabusertib",350.251,0
+"SW837",7,"Rabusertib",481.287,7
+"SW837",7,"Rabusertib",735.604,14
+"SW837",7,"Rabusertib",1211.173,21
+"SW837",7,"Rabusertib",1617.81,25
+"SW837",8,"Rabusertib",236.609,0
+"SW837",8,"Rabusertib",338.493,7
+"SW837",8,"Rabusertib",419.35,14
+"SW837",8,"Rabusertib",946.247,21
+"SW837",8,"Rabusertib",908.202,25
+"SW837",9,"Rabusertib",274.915,0
+"SW837",9,"Rabusertib",640.612,7
+"SW837",9,"Rabusertib",679.357,14
+"SW837",9,"Rabusertib",1100.502,21
+"SW837",9,"Rabusertib",986.499,25
+"SW837",10,"Rabusertib",292.551,0
+"SW837",10,"Rabusertib",504.136,7
+"SW837",10,"Rabusertib",622.985,14
+"SW837",10,"Rabusertib",1493.395,21
+"SW837",10,"Rabusertib",1721.414,25
+"SW837",11,"Rabusertib",227.212,0
+"SW837",11,"Rabusertib",345.918,7
+"SW837",11,"Rabusertib",430.614,14
+"SW837",11,"Rabusertib",887.711,21
+"SW837",11,"Rabusertib",808.814,25
+"SW837",12,"Rabusertib",438.556,0
+"SW837",12,"Rabusertib",511.033,7
+"SW837",12,"Rabusertib",819.039,14
+"SW837",12,"Rabusertib",1471.93,21
+"SW837",12,"Rabusertib",1140.393,25
+"SW837",13,"Irinotecan",367.67,0
+"SW837",13,"Irinotecan",460.098,7
+"SW837",13,"Irinotecan",506.391,14
+"SW837",13,"Irinotecan",462.56,21
+"SW837",13,"Irinotecan",518.099,25
+"SW837",14,"Irinotecan",692.245,0
+"SW837",14,"Irinotecan",985.576,7
+"SW837",14,"Irinotecan",1561.008,14
+"SW837",14,"Irinotecan",935.933,21
+"SW837",14,"Irinotecan",917.098,25
+"SW837",15,"Irinotecan",315.042,0
+"SW837",15,"Irinotecan",367.362,7
+"SW837",15,"Irinotecan",731.097,14
+"SW837",15,"Irinotecan",604.519,21
+"SW837",15,"Irinotecan",489.504,25
+"SW837",16,"Irinotecan",656.731,0
+"SW837",16,"Irinotecan",932.717,7
+"SW837",16,"Irinotecan",1440.416,14
+"SW837",16,"Irinotecan",995.822,21
+"SW837",16,"Irinotecan",928.781,25
+"SW837",17,"Irinotecan",361.926,0
+"SW837",17,"Irinotecan",335.963,7
+"SW837",17,"Irinotecan",514.495,14
+"SW837",17,"Irinotecan",372.575,21
+"SW837",17,"Irinotecan",405.08,25
+"SW837",18,"Irinotecan",220.387,0
+"SW837",18,"Irinotecan",533.853,7
+"SW837",18,"Irinotecan",615.594,14
+"SW837",18,"Irinotecan",704.23,21
+"SW837",18,"Irinotecan",516.503,25
+"SW837",19,"Irinotecan",259.397,0
+"SW837",19,"Irinotecan",353.268,7
+"SW837",19,"Irinotecan",559.964,14
+"SW837",19,"Irinotecan",515.175,21
+"SW837",19,"Irinotecan",506.105,25
+"SW837",20,"Irinotecan",333.032,0
+"SW837",20,"Irinotecan",405.017,7
+"SW837",20,"Irinotecan",448.294,14
+"SW837",20,"Irinotecan",390.462,21
+"SW837",20,"Irinotecan",380.019,25
+"SW837",21,"Irinotecan + Rabusertib",331.853,0
+"SW837",21,"Irinotecan + Rabusertib",319.816,7
+"SW837",21,"Irinotecan + Rabusertib",292.403,14
+"SW837",21,"Irinotecan + Rabusertib",246.737,21
+"SW837",21,"Irinotecan + Rabusertib",248.573,25
+"SW837",22,"Irinotecan + Rabusertib",756.554,0
+"SW837",22,"Irinotecan + Rabusertib",1159.179,7
+"SW837",22,"Irinotecan + Rabusertib",1129.734,14
+"SW837",22,"Irinotecan + Rabusertib",1140.636,21
+"SW837",22,"Irinotecan + Rabusertib",715.025,25
+"SW837",23,"Irinotecan + Rabusertib",340.06,0
+"SW837",23,"Irinotecan + Rabusertib",373.053,7
+"SW837",23,"Irinotecan + Rabusertib",411.946,14
+"SW837",23,"Irinotecan + Rabusertib",430.901,21
+"SW837",23,"Irinotecan + Rabusertib",356.959,25
+"SW837",24,"Irinotecan + Rabusertib",238.266,0
+"SW837",24,"Irinotecan + Rabusertib",203.323,7
+"SW837",24,"Irinotecan + Rabusertib",270.245,14
+"SW837",24,"Irinotecan + Rabusertib",298.724,21
+"SW837",24,"Irinotecan + Rabusertib",284.095,25

@@ -1,0 +1,124 @@
+"Model","Mice.ID","Treatment","Tumor.Volume","Date"
+"SNU-81",1,"Vehicle",189.914,0
+"SNU-81",1,"Vehicle",631.882,8
+"SNU-81",1,"Vehicle",3607.021,15
+"SNU-81",2,"Vehicle",376.154,0
+"SNU-81",2,"Vehicle",1062.276,8
+"SNU-81",2,"Vehicle",2993.246,15
+"SNU-81",3,"Vehicle",540.735,0
+"SNU-81",3,"Vehicle",1007.467,8
+"SNU-81",3,"Vehicle",2618.811,15
+"SNU-81",4,"Vehicle",395.005,0
+"SNU-81",4,"Vehicle",1214.841,8
+"SNU-81",4,"Vehicle",2792.003,15
+"SNU-81",5,"Vehicle",48.724,0
+"SNU-81",5,"Vehicle",107.776,8
+"SNU-81",5,"Vehicle",310.242,15
+"SNU-81",6,"Rabusertib",237.544,0
+"SNU-81",6,"Rabusertib",1081.156,8
+"SNU-81",6,"Rabusertib",2028.322,15
+"SNU-81",7,"Rabusertib",340.337,0
+"SNU-81",7,"Rabusertib",756.016,8
+"SNU-81",7,"Rabusertib",2806.153,15
+"SNU-81",8,"Rabusertib",414.2,0
+"SNU-81",8,"Rabusertib",1457.538,8
+"SNU-81",8,"Rabusertib",3341.038,15
+"SNU-81",9,"Rabusertib",219.326,0
+"SNU-81",9,"Rabusertib",510.479,8
+"SNU-81",9,"Rabusertib",1709.23,15
+"SNU-81",10,"Rabusertib",518.342,0
+"SNU-81",10,"Rabusertib",1774.161,8
+"SNU-81",10,"Rabusertib",3777.451,15
+"SNU-81",11,"Rabusertib",65.338,0
+"SNU-81",11,"Rabusertib",318.921,8
+"SNU-81",11,"Rabusertib",1337.279,15
+"SNU-81",12,"Irinotecan",523.424,0
+"SNU-81",12,"Irinotecan",760.034,8
+"SNU-81",12,"Irinotecan",993.934,15
+"SNU-81",12,"Irinotecan",1176.515,19
+"SNU-81",12,"Irinotecan",533.645,30
+"SNU-81",12,"Irinotecan",324.15,36
+"SNU-81",13,"Irinotecan",80.078,0
+"SNU-81",13,"Irinotecan",111.352,8
+"SNU-81",13,"Irinotecan",96.734,15
+"SNU-81",13,"Irinotecan",59.468,19
+"SNU-81",13,"Irinotecan",98.317,30
+"SNU-81",13,"Irinotecan",65.442,36
+"SNU-81",14,"Irinotecan",150.282,0
+"SNU-81",14,"Irinotecan",205.843,8
+"SNU-81",14,"Irinotecan",328.311,15
+"SNU-81",14,"Irinotecan",177.297,19
+"SNU-81",14,"Irinotecan",227.591,30
+"SNU-81",14,"Irinotecan",117.146,36
+"SNU-81",15,"Irinotecan",254.222,0
+"SNU-81",15,"Irinotecan",313.498,8
+"SNU-81",15,"Irinotecan",296.079,15
+"SNU-81",15,"Irinotecan",305.279,19
+"SNU-81",15,"Irinotecan",253.694,30
+"SNU-81",15,"Irinotecan",328.865,36
+"SNU-81",16,"Irinotecan",337.91,0
+"SNU-81",16,"Irinotecan",209.451,8
+"SNU-81",16,"Irinotecan",296.636,15
+"SNU-81",16,"Irinotecan",396.668,19
+"SNU-81",16,"Irinotecan",263.903,30
+"SNU-81",16,"Irinotecan",413.939,36
+"SNU-81",17,"Irinotecan",460.249,0
+"SNU-81",17,"Irinotecan",1022.416,8
+"SNU-81",17,"Irinotecan",823.302,15
+"SNU-81",17,"Irinotecan",882.484,19
+"SNU-81",17,"Irinotecan",181.766,30
+"SNU-81",17,"Irinotecan",411.514,36
+"SNU-81",18,"Irinotecan",690.458,0
+"SNU-81",18,"Irinotecan",684.12,8
+"SNU-81",18,"Irinotecan",1079.322,15
+"SNU-81",18,"Irinotecan",758.194,19
+"SNU-81",18,"Irinotecan",555.781,30
+"SNU-81",18,"Irinotecan",314.109,36
+"SNU-81",19,"Irinotecan",619.225,0
+"SNU-81",19,"Irinotecan",746.532,8
+"SNU-81",19,"Irinotecan",745.277,15
+"SNU-81",19,"Irinotecan",1787.675,19
+"SNU-81",19,"Irinotecan",1052.872,30
+"SNU-81",19,"Irinotecan",458.073,36
+"SNU-81",20,"Irinotecan",750.114,0
+"SNU-81",20,"Irinotecan",1075.783,8
+"SNU-81",20,"Irinotecan",532.181,15
+"SNU-81",20,"Irinotecan",522.758,19
+"SNU-81",20,"Irinotecan",253.313,30
+"SNU-81",20,"Irinotecan",266.337,36
+"SNU-81",21,"Irinotecan",665.08,0
+"SNU-81",21,"Irinotecan",1555.704,8
+"SNU-81",21,"Irinotecan",1909.529,15
+"SNU-81",21,"Irinotecan",1856.682,19
+"SNU-81",21,"Irinotecan",1551.959,30
+"SNU-81",21,"Irinotecan",629.586,36
+"SNU-81",22,"Irinotecan + Rabusertib",244.185,0
+"SNU-81",22,"Irinotecan + Rabusertib",288.02,8
+"SNU-81",22,"Irinotecan + Rabusertib",429.969,15
+"SNU-81",22,"Irinotecan + Rabusertib",179.874,19
+"SNU-81",22,"Irinotecan + Rabusertib",74.012,30
+"SNU-81",22,"Irinotecan + Rabusertib",108.627,36
+"SNU-81",23,"Irinotecan + Rabusertib",113.549,0
+"SNU-81",23,"Irinotecan + Rabusertib",151.363,8
+"SNU-81",23,"Irinotecan + Rabusertib",164.59,15
+"SNU-81",23,"Irinotecan + Rabusertib",82.749,19
+"SNU-81",23,"Irinotecan + Rabusertib",27.486,30
+"SNU-81",23,"Irinotecan + Rabusertib",37.484,36
+"SNU-81",24,"Irinotecan + Rabusertib",551.429,0
+"SNU-81",24,"Irinotecan + Rabusertib",607.023,8
+"SNU-81",24,"Irinotecan + Rabusertib",1067.72,15
+"SNU-81",24,"Irinotecan + Rabusertib",762.272,19
+"SNU-81",24,"Irinotecan + Rabusertib",346.643,30
+"SNU-81",24,"Irinotecan + Rabusertib",290.095,36
+"SNU-81",25,"Irinotecan + Rabusertib",876.174,0
+"SNU-81",25,"Irinotecan + Rabusertib",663.089,8
+"SNU-81",25,"Irinotecan + Rabusertib",778.888,15
+"SNU-81",25,"Irinotecan + Rabusertib",621.759,19
+"SNU-81",25,"Irinotecan + Rabusertib",401.085,30
+"SNU-81",25,"Irinotecan + Rabusertib",226.027,36
+"SNU-81",26,"Irinotecan + Rabusertib",803.151,0
+"SNU-81",26,"Irinotecan + Rabusertib",620.41,8
+"SNU-81",26,"Irinotecan + Rabusertib",1102.173,15
+"SNU-81",26,"Irinotecan + Rabusertib",1295.111,19
+"SNU-81",26,"Irinotecan + Rabusertib",1039.507,30
+"SNU-81",26,"Irinotecan + Rabusertib",935.644,36

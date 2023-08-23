@@ -1,0 +1,234 @@
+"Model","Mice.ID","Treatment","Tumor.Volume","Date"
+"LS-1034",1,"Vehicle",275.408,0
+"LS-1034",1,"Vehicle",427.982,3
+"LS-1034",1,"Vehicle",831.847,10
+"LS-1034",1,"Vehicle",1046.091,17
+"LS-1034",2,"Vehicle",475.691,0
+"LS-1034",2,"Vehicle",1199.642,3
+"LS-1034",2,"Vehicle",1498.416,10
+"LS-1034",2,"Vehicle",1413.716,17
+"LS-1034",3,"Vehicle",116.698,0
+"LS-1034",3,"Vehicle",150.466,3
+"LS-1034",3,"Vehicle",364.767,10
+"LS-1034",3,"Vehicle",634.263,17
+"LS-1034",4,"Vehicle",215.546,0
+"LS-1034",4,"Vehicle",584.625,3
+"LS-1034",4,"Vehicle",1250.953,10
+"LS-1034",4,"Vehicle",2970.178,17
+"LS-1034",5,"Vehicle",209.275,0
+"LS-1034",5,"Vehicle",500.975,3
+"LS-1034",5,"Vehicle",1767.808,10
+"LS-1034",5,"Vehicle",3326.552,17
+"LS-1034",6,"Vehicle",528.656,0
+"LS-1034",6,"Vehicle",491.327,3
+"LS-1034",6,"Vehicle",1241.384,10
+"LS-1034",6,"Vehicle",2223.361,17
+"LS-1034",7,"Rabusertib",217.515,0
+"LS-1034",7,"Rabusertib",456.286,3
+"LS-1034",7,"Rabusertib",494.042,10
+"LS-1034",7,"Rabusertib",1287.188,17
+"LS-1034",8,"Rabusertib",256.169,0
+"LS-1034",8,"Rabusertib",459.872,3
+"LS-1034",8,"Rabusertib",958.503,10
+"LS-1034",8,"Rabusertib",1569.147,17
+"LS-1034",9,"Rabusertib",531.101,0
+"LS-1034",9,"Rabusertib",770.432,3
+"LS-1034",9,"Rabusertib",1217.072,10
+"LS-1034",9,"Rabusertib",1855.321,17
+"LS-1034",10,"Rabusertib",162.779,0
+"LS-1034",10,"Rabusertib",549.951,3
+"LS-1034",10,"Rabusertib",699.953,10
+"LS-1034",10,"Rabusertib",1663.314,17
+"LS-1034",11,"Rabusertib",446.515,0
+"LS-1034",11,"Rabusertib",465.811,3
+"LS-1034",11,"Rabusertib",1536.36,10
+"LS-1034",11,"Rabusertib",1730.003,17
+"LS-1034",12,"Rabusertib",349.111,0
+"LS-1034",12,"Rabusertib",667.424,3
+"LS-1034",12,"Rabusertib",804.147,10
+"LS-1034",12,"Rabusertib",1268.764,17
+"LS-1034",13,"Rabusertib",103.975,0
+"LS-1034",13,"Rabusertib",180.145,3
+"LS-1034",13,"Rabusertib",372.256,10
+"LS-1034",13,"Rabusertib",894.929,17
+"LS-1034",14,"Rabusertib",130.257,0
+"LS-1034",14,"Rabusertib",264.585,3
+"LS-1034",14,"Rabusertib",734.243,10
+"LS-1034",14,"Rabusertib",1153.901,17
+"LS-1034",15,"Rabusertib",370.47,0
+"LS-1034",15,"Rabusertib",771.545,3
+"LS-1034",15,"Rabusertib",675.689,10
+"LS-1034",15,"Rabusertib",1091.481,17
+"LS-1034",16,"Rabusertib",383.951,0
+"LS-1034",16,"Rabusertib",894.188,3
+"LS-1034",16,"Rabusertib",1109.781,10
+"LS-1034",16,"Rabusertib",2060.084,17
+"LS-1034",17,"Rabusertib",498.873,0
+"LS-1034",17,"Rabusertib",888.397,3
+"LS-1034",17,"Rabusertib",1138.878,10
+"LS-1034",17,"Rabusertib",2644.897,17
+"LS-1034",18,"Rabusertib",199.389,0
+"LS-1034",18,"Rabusertib",454.745,3
+"LS-1034",18,"Rabusertib",1258.514,10
+"LS-1034",18,"Rabusertib",2970.157,17
+"LS-1034",19,"Irinotecan",394.595,0
+"LS-1034",19,"Irinotecan",364.843,3
+"LS-1034",19,"Irinotecan",529.108,10
+"LS-1034",19,"Irinotecan",314.772,17
+"LS-1034",19,"Irinotecan",305.502,21
+"LS-1034",19,"Irinotecan",274.669,28
+"LS-1034",19,"Irinotecan",232.82,33
+"LS-1034",20,"Irinotecan",110.432,0
+"LS-1034",20,"Irinotecan",129.557,3
+"LS-1034",20,"Irinotecan",186.525,10
+"LS-1034",20,"Irinotecan",83.15,17
+"LS-1034",20,"Irinotecan",93.194,21
+"LS-1034",20,"Irinotecan",112.724,28
+"LS-1034",20,"Irinotecan",104.441,33
+"LS-1034",21,"Irinotecan",185.545,0
+"LS-1034",21,"Irinotecan",99.169,3
+"LS-1034",21,"Irinotecan",190.27,10
+"LS-1034",21,"Irinotecan",191.611,17
+"LS-1034",21,"Irinotecan",155.002,21
+"LS-1034",21,"Irinotecan",48.515,28
+"LS-1034",21,"Irinotecan",66.384,33
+"LS-1034",22,"Irinotecan",158.907,0
+"LS-1034",22,"Irinotecan",301.302,3
+"LS-1034",22,"Irinotecan",295.113,10
+"LS-1034",22,"Irinotecan",46.188,17
+"LS-1034",22,"Irinotecan",93.09,21
+"LS-1034",22,"Irinotecan",182.113,28
+"LS-1034",22,"Irinotecan",196.32,33
+"LS-1034",23,"Irinotecan",481.383,0
+"LS-1034",23,"Irinotecan",493.105,3
+"LS-1034",23,"Irinotecan",840.144,10
+"LS-1034",23,"Irinotecan",385.527,17
+"LS-1034",23,"Irinotecan",353.015,21
+"LS-1034",23,"Irinotecan",623.603,28
+"LS-1034",23,"Irinotecan",330.253,33
+"LS-1034",24,"Irinotecan",430.583,0
+"LS-1034",24,"Irinotecan",792.552,3
+"LS-1034",24,"Irinotecan",655.722,10
+"LS-1034",24,"Irinotecan",417.728,17
+"LS-1034",24,"Irinotecan",545.271,21
+"LS-1034",24,"Irinotecan",651.181,28
+"LS-1034",24,"Irinotecan",451.501,33
+"LS-1034",25,"Irinotecan",228.93,0
+"LS-1034",25,"Irinotecan",356.714,3
+"LS-1034",25,"Irinotecan",692.116,10
+"LS-1034",25,"Irinotecan",269.561,17
+"LS-1034",25,"Irinotecan",364.192,21
+"LS-1034",25,"Irinotecan",208.709,28
+"LS-1034",25,"Irinotecan",74.844,33
+"LS-1034",26,"Irinotecan",359.624,0
+"LS-1034",26,"Irinotecan",488.628,3
+"LS-1034",26,"Irinotecan",492.622,10
+"LS-1034",26,"Irinotecan",199.506,17
+"LS-1034",26,"Irinotecan",206.765,21
+"LS-1034",26,"Irinotecan",275.52,28
+"LS-1034",26,"Irinotecan",153.788,33
+"LS-1034",27,"Irinotecan",557.399,0
+"LS-1034",27,"Irinotecan",898.888,3
+"LS-1034",27,"Irinotecan",797.011,10
+"LS-1034",27,"Irinotecan",411.249,17
+"LS-1034",27,"Irinotecan",333.592,21
+"LS-1034",27,"Irinotecan",300.984,28
+"LS-1034",27,"Irinotecan",316.922,33
+"LS-1034",28,"Irinotecan",343.618,0
+"LS-1034",28,"Irinotecan",626.549,3
+"LS-1034",28,"Irinotecan",616.275,10
+"LS-1034",28,"Irinotecan",592.346,17
+"LS-1034",28,"Irinotecan",457.878,21
+"LS-1034",28,"Irinotecan",231.201,28
+"LS-1034",28,"Irinotecan",184.731,33
+"LS-1034",29,"Irinotecan",189.456,0
+"LS-1034",29,"Irinotecan",182.877,3
+"LS-1034",29,"Irinotecan",309.785,10
+"LS-1034",29,"Irinotecan",308.31,17
+"LS-1034",29,"Irinotecan",251.517,21
+"LS-1034",29,"Irinotecan",238.95,28
+"LS-1034",29,"Irinotecan",233.023,33
+"LS-1034",30,"Irinotecan + Rabusertib",165.802,0
+"LS-1034",30,"Irinotecan + Rabusertib",220.222,3
+"LS-1034",30,"Irinotecan + Rabusertib",137.867,10
+"LS-1034",30,"Irinotecan + Rabusertib",59.91,17
+"LS-1034",30,"Irinotecan + Rabusertib",44.267,21
+"LS-1034",30,"Irinotecan + Rabusertib",85.462,28
+"LS-1034",30,"Irinotecan + Rabusertib",65.273,33
+"LS-1034",31,"Irinotecan + Rabusertib",246.883,0
+"LS-1034",31,"Irinotecan + Rabusertib",387.888,3
+"LS-1034",31,"Irinotecan + Rabusertib",407.448,10
+"LS-1034",31,"Irinotecan + Rabusertib",77.931,17
+"LS-1034",31,"Irinotecan + Rabusertib",215.411,21
+"LS-1034",31,"Irinotecan + Rabusertib",91.815,28
+"LS-1034",31,"Irinotecan + Rabusertib",140.276,33
+"LS-1034",32,"Irinotecan + Rabusertib",111.41,0
+"LS-1034",32,"Irinotecan + Rabusertib",29.955,3
+"LS-1034",32,"Irinotecan + Rabusertib",52.123,10
+"LS-1034",32,"Irinotecan + Rabusertib",12.919,17
+"LS-1034",32,"Irinotecan + Rabusertib",12.591,21
+"LS-1034",32,"Irinotecan + Rabusertib",19.546,28
+"LS-1034",32,"Irinotecan + Rabusertib",41.234,33
+"LS-1034",33,"Irinotecan + Rabusertib",423.951,0
+"LS-1034",33,"Irinotecan + Rabusertib",875.898,3
+"LS-1034",33,"Irinotecan + Rabusertib",869.712,10
+"LS-1034",33,"Irinotecan + Rabusertib",114.301,17
+"LS-1034",33,"Irinotecan + Rabusertib",157.592,21
+"LS-1034",33,"Irinotecan + Rabusertib",161.101,28
+"LS-1034",33,"Irinotecan + Rabusertib",138.71,33
+"LS-1034",34,"Irinotecan + Rabusertib",331.856,0
+"LS-1034",34,"Irinotecan + Rabusertib",991.775,3
+"LS-1034",34,"Irinotecan + Rabusertib",501.381,10
+"LS-1034",34,"Irinotecan + Rabusertib",89.539,17
+"LS-1034",34,"Irinotecan + Rabusertib",197.142,21
+"LS-1034",34,"Irinotecan + Rabusertib",292.224,28
+"LS-1034",34,"Irinotecan + Rabusertib",173.083,33
+"LS-1034",35,"Irinotecan + Rabusertib",438.5,0
+"LS-1034",35,"Irinotecan + Rabusertib",504.745,3
+"LS-1034",35,"Irinotecan + Rabusertib",816.803,10
+"LS-1034",35,"Irinotecan + Rabusertib",60.367,17
+"LS-1034",35,"Irinotecan + Rabusertib",78.923,21
+"LS-1034",35,"Irinotecan + Rabusertib",103.523,28
+"LS-1034",35,"Irinotecan + Rabusertib",57.23,33
+"LS-1034",36,"Irinotecan + Rabusertib",238.101,0
+"LS-1034",36,"Irinotecan + Rabusertib",502.565,3
+"LS-1034",36,"Irinotecan + Rabusertib",210.742,10
+"LS-1034",36,"Irinotecan + Rabusertib",67.208,17
+"LS-1034",36,"Irinotecan + Rabusertib",123.876,21
+"LS-1034",36,"Irinotecan + Rabusertib",91.827,28
+"LS-1034",36,"Irinotecan + Rabusertib",186.48,33
+"LS-1034",37,"Irinotecan + Rabusertib",109.679,0
+"LS-1034",37,"Irinotecan + Rabusertib",159.692,3
+"LS-1034",37,"Irinotecan + Rabusertib",171.969,10
+"LS-1034",37,"Irinotecan + Rabusertib",4.866,17
+"LS-1034",37,"Irinotecan + Rabusertib",37.174,21
+"LS-1034",37,"Irinotecan + Rabusertib",33.004,28
+"LS-1034",37,"Irinotecan + Rabusertib",38.234,33
+"LS-1034",38,"Irinotecan + Rabusertib",530.502,0
+"LS-1034",38,"Irinotecan + Rabusertib",647.76,3
+"LS-1034",38,"Irinotecan + Rabusertib",1002.862,10
+"LS-1034",38,"Irinotecan + Rabusertib",344.766,17
+"LS-1034",38,"Irinotecan + Rabusertib",199.425,21
+"LS-1034",38,"Irinotecan + Rabusertib",135.911,28
+"LS-1034",38,"Irinotecan + Rabusertib",88.079,33
+"LS-1034",39,"Irinotecan + Rabusertib",365.396,0
+"LS-1034",39,"Irinotecan + Rabusertib",566.066,3
+"LS-1034",39,"Irinotecan + Rabusertib",649.738,10
+"LS-1034",39,"Irinotecan + Rabusertib",261.242,17
+"LS-1034",39,"Irinotecan + Rabusertib",239.969,21
+"LS-1034",39,"Irinotecan + Rabusertib",106.336,28
+"LS-1034",39,"Irinotecan + Rabusertib",158.515,33
+"LS-1034",40,"Irinotecan + Rabusertib",185.375,0
+"LS-1034",40,"Irinotecan + Rabusertib",327.529,3
+"LS-1034",40,"Irinotecan + Rabusertib",137.68,10
+"LS-1034",40,"Irinotecan + Rabusertib",0.904,17
+"LS-1034",40,"Irinotecan + Rabusertib",53.158,21
+"LS-1034",40,"Irinotecan + Rabusertib",44.119,28
+"LS-1034",40,"Irinotecan + Rabusertib",52.27,33
+"LS-1034",41,"Irinotecan + Rabusertib",501.355,0
+"LS-1034",41,"Irinotecan + Rabusertib",583.731,3
+"LS-1034",41,"Irinotecan + Rabusertib",491.308,10
+"LS-1034",41,"Irinotecan + Rabusertib",50.626,17
+"LS-1034",41,"Irinotecan + Rabusertib",137.687,21
+"LS-1034",41,"Irinotecan + Rabusertib",238.066,28
+"LS-1034",41,"Irinotecan + Rabusertib",224.445,33
