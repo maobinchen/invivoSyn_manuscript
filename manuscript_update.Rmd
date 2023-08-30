@@ -67,68 +67,92 @@ simulate tumor growth date to generate Figure 1B, then calculate average eGR of 
 ```{r Figure1}
 #--draw Figure 1A
 #--sample from exponential growth--#
-#set.seed(12345)
 set.seed(123451)
-day = c(0, 3, 7, 10, 14, 17, 21, 24,27,30)
+Day = c(0, 3, 7, 10, 14, 17, 21, 24,27,30)
 V0 = 50
 k = 0.11
-Vt = V0 * exp(k*day)
+Vt = V0 * exp(k*Day) 
 n = length(Vt)
-Vtt = Vt + rnorm(n, Vt, 5*day)
-TVday = data.frame(day,log(Vtt), log(Vtt[1]))
-names(TVday) = c('day','logTV','logTV0')
-TVday.AUC = pracma::trapz(x=TVday$day,y=TVday$logTV) - pracma::trapz(x=TVday$day,y=TVday$logTV0)
-TVday.eg = function(x) log(100) + 0.1077018 * x #2*TVday.AUC/30/30 = 0.1077018
+Vtt = Vt + rnorm(n, Vt, 5*Day)
+plot(Vtt~Day)
+TVDay = data.frame(Day,log(Vtt), log(Vtt[1]))
+names(TVDay) = c('Day','logTV','logTV0')
+TVDay.AUC = pracma::trapz(x=TVDay$Day,y=TVDay$logTV) - pracma::trapz(x=TVDay$Day,y=TVDay$logTV0)
+TVDay.eg = function(x) log(100) + 0.1077018 * x #2*TVDay.AUC/30/30 = 0.1077018
+TVDay_TV = data.frame(Day,Vtt) #in TV
+names(TVDay_TV) = c('Day','TV')
 
-#set.seed(143531)
 set.seed(1432)
-k = -0.07
-Vt = V0 * exp(k*day)
+k = -0.07 
+Vt = V0 * exp(k*Day) 
 n = length(Vt)
-Vtt = Vt + rnorm(n, Vt, 0.5*day)
+Vtt = Vt + rnorm(n, Vt, 0.5*Day)
 Vtt[Vtt<0] = 0
 Vtt[9]=1
 Vtt[10]=1
-plot(Vtt~day)
-TVday2 = data.frame(day,log(Vtt), log(Vtt[1]))
-TVday2 = head(TVday2,-1)
-names(TVday2) = c('day','logTV','logTV0')
-TVday2.AUC = pracma::trapz(x=TVday2$day,y=TVday2$logTV) - pracma::trapz(x=TVday2$day,y=TVday2$logTV0)
-TVday2.eg = function(x) log(100)  -0.08622278 * x #2*TVday.AUC/30/30 =  -0.08622278
+plot(Vtt~Day)
+TVDay2 = data.frame(Day,log(Vtt), log(Vtt[1]))
+TVDay2 = head(TVDay2,-1)
+names(TVDay2) = c('Day','logTV','logTV0')
+TVDay2.AUC = pracma::trapz(x=TVDay2$Day,y=TVDay2$logTV) - pracma::trapz(x=TVDay2$Day,y=TVDay2$logTV0)
+TVDay2.eg = function(x) log(100)  -0.08622278 * x #2*TVDay.AUC/30/30 =  -0.08622278
+TVDay2_TV = data.frame(Day,Vtt) #in TV
+names(TVDay2_TV) = c('Day','TV')
+	
+pdf(file='Figure1A.pdf')
+ggplot(TVDay_TV, aes(x=Day, y=TV)) + 
+	geom_point(color='steelblue3', size=5)+
+    geom_line(aes(y = TV), size=1.5, color='steelblue3') + 
+	scale_x_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,30)) +
+	#scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+	scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,3000))+
+	ylab(expression(paste("TV(", mm^3,")"), sep=''))+
+    theme_pubr(base_size = 20)
 
+ggplot(TVDay2_TV, aes(x=Day, y=TV)) + 
+	geom_point(color='steelblue3', size=5)+
+    geom_line(aes(y = TV), size=1.5, color='steelblue3') + 
+	scale_x_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,30)) +
+	#scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+	scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,100))+
+	ylab(expression(paste("TV(", mm^3,")"), sep=''))+
+    theme_pubr(base_size = 20)
 
-pdf(file='Figure1a.pdf')
-ggplot(TVday, aes(x=day, y=logTV)) +
-  geom_point(color='steelblue3', size=5)+
-  geom_line(aes(y = logTV), size=1.5, color='steelblue3') +
-  geom_line(aes(y = logTV0), size=1.5) +
-  geom_function(fun=TVday.eg, color='red', size=2) +
-  geom_ribbon(data=TVday,
-              aes(ymin=logTV0,ymax=logTV), fill="coral", alpha=0.3) +
-  scale_x_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,30)) +
-  #scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
-  scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
-  geom_text(x=20, y=5.5, label="AUC=48.47", size=7,  color='black')+
-  #geom_text(x=15, y=2, label=expression(nAUC == frac(AUC, 30^2)), size=9,  color='black')+
-  geom_text(x=15, y=2, label=expression(nAUC == frac(2*AUC, 30^2)), size=9,  color='black')+
-  geom_text(x=25, y=2, label="= 0.108", size=9,  color='black')+
-  theme_pubr(base_size = 20)
+ggplot(TVDay, aes(x=Day, y=logTV)) + 
+	geom_point(color='steelblue3', size=5)+
+    geom_line(aes(y = logTV), size=1.5, color='steelblue3') + 
+    geom_line(aes(y = logTV0), size=1.5) +
+	geom_function(fun=TVDay.eg, color='red', size=2) +
+    geom_ribbon(data=TVDay, 
+          aes(ymin=logTV0,ymax=logTV), fill="coral", alpha=0.3) +
+	scale_x_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,30)) +
+	#scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+	scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
+	geom_text(x=20, y=5.5, label="AUC=48.47", size=7,  color='black')+
+	#geom_text(x=15, y=2, label=expression(nAUC == frac(AUC, 30^2)), size=9,  color='black')+
+	geom_text(x=15, y=2, label=expression(eGR == frac(2*AUC, 30^2)), size=9,  color='black')+
+	geom_text(x=25, y=2, label="= 0.108", size=9,  color='black')+
+	ylab(expression(paste("logTV(", mm^3,")"), sep=''))+
+    theme_pubr(base_size = 20)
 
-ggplot(TVday2, aes(x=day, y=logTV)) +
-  geom_point(color='steelblue3', size=5)+
-  geom_line(aes(y = logTV), size=1.5, color='steelblue3') +
-  geom_line(aes(y = logTV0), size=1.5) +
-  geom_function(fun=TVday2.eg, color='red', size=2, xlim=c(0,27)) +
-  geom_ribbon(data=TVday2,
-              aes(ymin=logTV0,ymax=logTV), fill="lightgreen", alpha=0.3) +
-  scale_x_continuous(breaks = scales::pretty_breaks(n = 10), limits=c(0,30)) +
-  #scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
-  scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
-  geom_text(x=20, y=4, label="AUC=-31.43", size=7, color='black')+
-  geom_text(x=15, y=6, label=expression(nAUC == frac(2*AUC, 27^2)), size=9,  color='black')+
-  geom_text(x=26, y=6, label="= -0.086", size=9,  color='black')+
-  theme_pubr(base_size = 20)
+ggplot(TVDay2, aes(x=Day, y=logTV)) + 
+	geom_point(color='steelblue3', size=5)+
+    geom_line(aes(y = logTV), size=1.5, color='steelblue3') + 
+    geom_line(aes(y = logTV0), size=1.5) +
+	geom_function(fun=TVDay2.eg, color='red', size=2, xlim=c(0,27)) +
+    geom_ribbon(data=TVDay2, 
+          aes(ymin=logTV0,ymax=logTV), fill="lightgreen", alpha=0.3) +
+	scale_x_continuous(breaks = scales::pretty_breaks(n = 10), limits=c(0,30)) +
+	#scale_y_continuous(breaks = seq(0, 8, by = 1), limits=c(0,8))+
+	scale_y_continuous(breaks = scales::pretty_breaks(n = 10),limits=c(0,8))+
+	geom_text(x=20, y=4, label="AUC=-31.43", size=7, color='black')+
+	geom_text(x=15, y=6, label=expression(eGR == frac(2*AUC, 27^2)), size=9,  color='black')+
+	geom_text(x=26, y=6, label="= -0.086", size=9,  color='black')+
+	ylab(expression(paste("logTV(", mm^3,")"), sep=''))+
+    theme_pubr(base_size = 20)
+
 dev.off()
+
 
 t=35
 tv=simu_TV2(cv_r=0.1,t=t,tgi_c=0.8,n = 10,vehicle_double_time = 6)
@@ -514,7 +538,7 @@ ggplot(power_stats5 %>% filter(type=='AUC')) +
   geom_smooth(n=3) +
   facet_wrap(~t) +
   theme_Publication() +ylab('Empirical power')+
-  scale_colour_Publication()+scale_y_continuous(breaks = seq(0,1,0.2))+
+  scale_colour_Publication()+scale6y_continuous(breaks = seq(0,1,0.2))+
   theme(axis.text=element_text(size=rel(1.4)),axis.ticks=element_line(size=rel(2.5)),axis.title = element_text(size=rel(1.4)))
 ggsave(paste0('Fig6B_',kw,"_power_curve_bliss.png"), width = 8,height = 6, dpi = 300)
 
@@ -527,6 +551,7 @@ t_vec=round(seq(0,t,3.5)) #define vector of days to collect TV
 if(t>max(t_vec)) t_vec=c(t_vec,t)
 tv4=tv4 %>% filter(Day %in% t_vec)
 plot_tumor_growth_curve(tv4,y='TV',kw='Fig6C')
+ggsave(paste0('Fig6C_',kw,"_power_curve_bliss.pdf"),device = pdf, width = 8,height = 6, dpi = 300)
 
 system.time(power_stats6 <- sim_power(
   type = c("CombPDX_CI", "AUC"),
